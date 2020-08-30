@@ -81,9 +81,30 @@ function generateModal(student) {
 //  EVENT LISTENERS
 // ------------------------------------------
 
+// Click the "X" button to close out of the modal
 document.addEventListener('click', (e) => {
 	let target = event.target;
 	if (target.tagName === 'BUTTON') {
         document.querySelector('.modal-container').style.display = 'none';
-	}
+    }
 })
+
+
+// Attempts: Click anywhere outside the modal to close the modal
+// document.addEventListener('click', (e) => {
+//     let modalContainer = document.querySelector('.modal-container')
+//     if (modalContainer.style.display != 'none') {
+//         let target = event.target;
+//             if (target.className != '.modal') {
+//                 document.querySelector('.modal-container').style.display = 'none';
+//             }
+//     }
+// })
+
+// document.querySelector('.modal-container').addEventListener('click', (e) => {
+//     // let modalContainer = document.querySelector('.modal-container')
+//     let target = event.target;
+//     if (target.className != 'modal-info-container') {
+//                 document.querySelector('.modal-container').style.display = 'none';
+//             }
+//     })
