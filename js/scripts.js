@@ -3,7 +3,7 @@
 // ------------------------------------------
 
 const gallery = document.getElementById('gallery');
-
+const searchContainer = document.querySelector('.search-container');
 
 // ------------------------------------------
 //  FETCH FUNCTIONS
@@ -17,8 +17,8 @@ function fetchData(url) {
 
 fetchData('https://randomuser.me/api/?results=12')
     .then(data => { 
-        const students = data.results
-        students.map(student => generateStudentCard(student))
+        const employees = data.results
+        employees.map(employee => generateEmployeeCard(employee))
               
         const cards = gallery.querySelectorAll(".card")
         cards.forEach(card => {
@@ -26,8 +26,8 @@ fetchData('https://randomuser.me/api/?results=12')
                 let target = event.target;
                 const index = Array.from(cards).indexOf(target)
                 // const index = cards.indexOf(target)
-                generateModal(students[index])
-                console.log(students[index])                
+                generateModal(employees[index])
+                console.log(employees[index])                
             })
         })
     })     
@@ -37,16 +37,16 @@ fetchData('https://randomuser.me/api/?results=12')
 //  HELPER FUNCTIONS
 // ------------------------------------------
 
-function generateStudentCard(student) {
+function generateEmployeeCard(employee) {
     const html = `
         <div class="card">
             <div class="card-img-container">
-                <img class="card-img" src="${student.picture.thumbnail}" alt="profile picture">
+                <img class="card-img" src="${employee.picture.thumbnail}" alt="profile picture">
             </div>
             <div class="card-info-container">
-                <h3 id="${student.name.last}" class="card-name cap">${student.name.first} ${student.name.last}</h3>
-                <p class="card-text">${student.email}</p>
-                <p class="card-text cap">${student.location.city}, ${student.location.state}</p>
+                <h3 id="${employee.name.last}" class="card-name cap">${employee.name.first} ${employee.name.last}</h3>
+                <p class="card-text">${employee.email}</p>
+                <p class="card-text cap">${employee.location.city}, ${employee.location.state}</p>
             </div>
         </div>
     `;
@@ -55,20 +55,20 @@ function generateStudentCard(student) {
 }
 
 // generateModal(users[index]);
-function generateModal(student) {
+function generateModal(employee) {
     const modalHtml = `
         <div class="modal-container">
             <div class="modal">
                 <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
                 <div class="modal-info-container">
-                    <img class="modal-img" src="${student.picture.thumbnail}" alt="profile picture">
-                    <h3 id="${student.name.last}" class="modal-name cap">${student.name.first} ${student.name.last}</h3>
-                    <p class="modal-text">${student.email}</p>
-                    <p class="modal-text cap">${student.location.city}</p>
+                    <img class="modal-img" src="${employee.picture.thumbnail}" alt="profile picture">
+                    <h3 id="${employee.name.last}" class="modal-name cap">${employee.name.first} ${employee.name.last}</h3>
+                    <p class="modal-text">${employee.email}</p>
+                    <p class="modal-text cap">${employee.location.city}</p>
                     <hr>
-                    <p class="modal-text">${student.phone}</p>
-                    <p class="modal-text">${student.location.street.number} ${student.location.street.name} ${student.location.city}, ${student.location.state} ${student.location.postcode}</p>
-                    <p class="modal-text">Birthday: ${student.dob.date}</p>
+                    <p class="modal-text">${employee.phone}</p>
+                    <p class="modal-text">${employee.location.street.number} ${employee.location.street.name} ${employee.location.city}, ${employee.location.state} ${employee.location.postcode}</p>
+                    <p class="modal-text">Birthday: ${employee.dob.date}</p>
                 </div>
             </div>
         </div>
@@ -90,7 +90,7 @@ document.addEventListener('click', (e) => {
 })
 
 
-// Attempts: Click anywhere outside the modal to close the modal
+// ATTEMPTS: Click anywhere outside the modal to close the modal
 // document.addEventListener('click', (e) => {
 //     let modalContainer = document.querySelector('.modal-container')
 //     if (modalContainer.style.display != 'none') {
@@ -100,7 +100,6 @@ document.addEventListener('click', (e) => {
 //             }
 //     }
 // })
-
 // document.querySelector('.modal-container').addEventListener('click', (e) => {
 //     // let modalContainer = document.querySelector('.modal-container')
 //     let target = event.target;
@@ -108,3 +107,22 @@ document.addEventListener('click', (e) => {
 //                 document.querySelector('.modal-container').style.display = 'none';
 //             }
 //     })
+
+
+// ------------------------------------------
+//  SEARCH FUNCTIONALITY
+// ------------------------------------------
+
+// Add search to HTML
+searchContainer.innerHTML = `
+<form action="#" method="get">
+    <input type="search" id="search-input" class="search-input" placeholder="Search...">
+    <input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit">
+</form>
+`;
+
+const search = document.getElementById("search-input")
+const searchValue = search.value
+
+// Array of all the employee cards
+const cards = gallery.querySelectorAll(".card")
