@@ -6,7 +6,7 @@ const gallery = document.getElementById('gallery');
 const searchContainer = document.querySelector('.search-container');
 
 // ------------------------------------------
-//  FETCH FUNCTIONS
+//  FETCH DATA
 // ------------------------------------------
 
 function fetchData(url) {
@@ -15,20 +15,45 @@ function fetchData(url) {
         .catch(error => console.log('Error:', error))
     }      
 
-fetchData('https://randomuser.me/api/?results=12')
+fetchData('https://randomuser.me/api/?results=12&nat=us')
     .then(data => { 
         const employees = data.results
         employees.map(employee => generateEmployeeCard(employee))
-              
+
         const cards = gallery.querySelectorAll(".card")
         cards.forEach(card => {
             card.addEventListener('click', (e) => {
-                let target = event.target;
+                let target = e.target.closest('.card');
                 const index = Array.from(cards).indexOf(target)
-                // const index = cards.indexOf(target)
-                generateModal(employees[index])             
-            })
+                generateModal(employees[index], index) 
+
+                // Previous and next modals
+                const prevButton = document.querySelector('.modal-prev')
+                prevButton.addEventListener('click', (e) => {
+                    switchModal(employees, index - 1)
+                })
+
+                const nextButton = document.querySelector('.modal-next')
+                nextButton.addEventListener('click', (e) => {
+                    switchModal(employees, index + 1)
+                })
+            })  
         })
+        
+        // Search employees
+        const search = document.getElementById("search-input")
+        const employeeArray = Array.from(cards)
+        const submit = document.getElementById("search-submit")
+
+        submit.addEventListener('click', (event) => {
+            searchNames(search, employeeArray);
+        });
+
+        search.addEventListener('keyup', (event) => {
+            searchNames(search, employeeArray);
+        });
+
+
     })     
     
         
@@ -36,7 +61,10 @@ fetchData('https://randomuser.me/api/?results=12')
 //  HELPER FUNCTIONS
 // ------------------------------------------
 
+// ------------------------------------------
+// GENERATE EMPLOYEE CARD
 function generateEmployeeCard(employee) {
+    // Create employee card HTML
     const html = `
         <div class="card">
             <div class="card-img-container">
@@ -49,14 +77,17 @@ function generateEmployeeCard(employee) {
             </div>
         </div>
     `;
-    gallery.insertAdjacentHTML('beforeend', html)
     
+    // Insert employee card HTML
+    gallery.insertAdjacentHTML('beforeend', html)   
 }
 
-// generateModal(users[index]);
-function generateModal(employee) {
+// ------------------------------------------
+// GENERATE MODAL 
+function generateModal(employee, index) {
+    // Create modal HTML
     const modalHtml = `
-        <div class="modal-container">
+        <div class="modal-container ${index}">
             <div class="modal">
                 <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
                 <div class="modal-info-container">
@@ -65,31 +96,89 @@ function generateModal(employee) {
                     <p class="modal-text">${employee.email}</p>
                     <p class="modal-text cap">${employee.location.city}</p>
                     <hr>
-                    <p class="modal-text">${employee.phone}</p>
+                    <p class="modal-text">${employee.phone[0]}${employee.phone[1]}${employee.phone[2]}${employee.phone[3]}${employee.phone[4]} ${employee.phone[6]}${employee.phone[7]}${employee.phone[8]}${employee.phone[9]}${employee.phone[10]}${employee.phone[11]}${employee.phone[12]}${employee.phone[13]}</p>
                     <p class="modal-text">${employee.location.street.number} ${employee.location.street.name} ${employee.location.city}, ${employee.location.state} ${employee.location.postcode}</p>
-                    <p class="modal-text">Birthday: ${employee.dob.date}</p>
+                    <p class="modal-text">Birthday: ${employee.dob.date[5]}${employee.dob.date[6]}/${employee.dob.date[8]}${employee.dob.date[9]}/${employee.dob.date[0]}${employee.dob.date[1]}${employee.dob.date[2]}${employee.dob.date[3]}</p>
                 </div>
+            </div>
+            <div class="modal-btn-container">
+                <button type="button" id="modal-prev" class="modal-prev btn">Prev</button>
+                <button type="button" id="modal-next" class="modal-next btn">Next</button>
             </div>
         </div>
     `;
-    gallery.insertAdjacentHTML('afterend', modalHtml)
+    
+    // Insert modal HTML
+    const body = document.querySelector('BODY')
+    body.insertAdjacentHTML('beforeend', modalHtml)
+
+    // Close modal
+    const modalContainer = document.querySelector('.modal-container')
+    const close = modalContainer.querySelector('.modal-close-btn')
+    close.addEventListener('click', (e) => {
+        let target = e.target.closest('.modal-close-btn');
+            if (target.className === 'modal-close-btn') {
+                document.querySelector('.modal-container').style.display = 'none'; 
+                modalContainer.classList.remove('modal-container')
+                modalContainer.classList.add('modal-closed')
+            }
+    })
+}
+
+// ------------------------------------------
+// SEARCH EMPLOYEES 
+searchContainer.innerHTML = `
+    <form action="#" method="get">
+        <input type="search" id="search-input" class="search-input" placeholder="Search...">
+        <input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit">
+    </form>
+`;
+function searchNames(search, employeeArray) {
+
+    if (search.value.length != 0) {
+      for (let i = 0; i < employeeArray.length; i++) {
+        let employeeName = employeeArray[i].querySelector("h3").textContent;
+        if (employeeName.toLowerCase().includes(search.value.toLowerCase())) {
+          employeeArray[i].style.display = 'inline-block';
+        } else {
+          employeeArray[i].style.display = 'none'; 
+        };
+      }; 
+    } else {
+        for (let i = 0; i < 12; i++) {
+            employeeArray[i].style.display = 'inline-block';
+        };
+    };
+};
+
+
+// ------------------------------------------
+// DISPLAY PREVIOUS AND NEXT MODAL
+function switchModal(employees, index) {
+    const modalContainer = document.querySelector('.modal-container')
+    modalContainer.style.display = 'none';
+    modalContainer.classList.remove('modal-container')
+    modalContainer.classList.add('modal-closed')
+    generateModal(employees[index], index)
 }
 
 
-// ------------------------------------------
-//  EVENT LISTENERS
-// ------------------------------------------
-
-// Click the "X" button to close out of the modal
-document.addEventListener('click', (e) => {
-	let target = event.target;
-	if (target.tagName === 'BUTTON') {
-        document.querySelector('.modal-container').style.display = 'none';
-    }
-})
 
 
-// ATTEMPTS: Click anywhere outside the modal to close the modal
+
+
+
+
+
+
+// ATTEMPTS : Click anywhere to close out of the modal
+// document.querySelector('.modal-container').addEventListener('click', (e) => {
+//     let target = event.target;
+//     if (target.closest.className != 'modal-info-container') {
+//         document.querySelector('.modal-container').style.display = 'none';
+//     }
+// })
+
 // document.addEventListener('click', (e) => {
 //     let modalContainer = document.querySelector('.modal-container')
 //     if (modalContainer.style.display != 'none') {
@@ -99,29 +188,3 @@ document.addEventListener('click', (e) => {
 //             }
 //     }
 // })
-// document.querySelector('.modal-container').addEventListener('click', (e) => {
-//     // let modalContainer = document.querySelector('.modal-container')
-//     let target = event.target;
-//     if (target.className != 'modal-info-container') {
-//                 document.querySelector('.modal-container').style.display = 'none';
-//             }
-//     })
-
-
-// ------------------------------------------
-//  SEARCH FUNCTIONALITY
-// ------------------------------------------
-
-// Add search to HTML
-searchContainer.innerHTML = `
-<form action="#" method="get">
-    <input type="search" id="search-input" class="search-input" placeholder="Search...">
-    <input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit">
-</form>
-`;
-
-const search = document.getElementById("search-input")
-const searchValue = search.value
-
-// Array of all the employee cards
-const cards = gallery.querySelectorAll(".card")
