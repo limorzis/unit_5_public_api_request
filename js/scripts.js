@@ -4,7 +4,7 @@
 
 const gallery = document.getElementById('gallery');
 const searchContainer = document.querySelector('.search-container');
-
+const employees = []
 // ------------------------------------------
 //  FETCH DATA
 // ------------------------------------------
@@ -17,10 +17,10 @@ function fetchData(url) {
 
 fetchData('https://randomuser.me/api/?results=12&nat=us')
     .then(data => { 
-        const employees = data.results
+        data.results.map(result => employees.push(result))
         employees.map(employee => generateEmployeeCard(employee))
 
-        const cards = gallery.querySelectorAll(".card")
+        const cards = gallery.querySelectorAll('.card')
         cards.forEach(card => {
             card.addEventListener('click', (e) => {
                 let target = e.target.closest('.card');
@@ -116,11 +116,13 @@ function generateModal(employees, index) {
     // Previous and next modals
     const prevButton = document.querySelector('.modal-prev')
     prevButton.addEventListener('click', (e) => {
+        // let employeeArray = Array.from(employees)
         switchModal(employees[index - 1])
     })
 
     const nextButton = document.querySelector('.modal-next')
     nextButton.addEventListener('click', (e) => {
+        // let employeeArray = Array.from(employees)
         switchModal(employees[index + 1])
     })
 }
