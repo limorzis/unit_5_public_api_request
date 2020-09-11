@@ -4,7 +4,7 @@
 
 const gallery = document.getElementById('gallery');
 const searchContainer = document.querySelector('.search-container');
-const employees = []
+const employeeData = []
 // ------------------------------------------
 //  FETCH DATA
 // ------------------------------------------
@@ -17,32 +17,30 @@ function fetchData(url) {
 
 fetchData('https://randomuser.me/api/?results=12&nat=us')
     .then(data => { 
-        data.results.map(result => employees.push(result))
-        employees.map(employee => generateEmployeeCard(employee))
+        data.results.map(result => employeeData.push(result))
+        employeeData.map(employee => generateEmployeeCard(employee))
 
         const cards = gallery.querySelectorAll('.card')
+        const cardsArray = Array.from(cards)
         cards.forEach(card => {
             card.addEventListener('click', (e) => {
                 let target = e.target.closest('.card');
-                let index = Array.from(cards).indexOf(target)
-                generateModal(employees[index], index) 
+                let index = cardsArray.indexOf(target)
+                generateModal(employeeData[index], index) 
             })  
         })
         
         // Search employees
         const search = document.getElementById("search-input")
-        const employeeArray = Array.from(cards)
         const submit = document.getElementById("search-submit")
 
         submit.addEventListener('click', (event) => {
-            searchNames(search, employeeArray);
+            searchNames(search, cardsArray);
         });
 
         search.addEventListener('keyup', (event) => {
-            searchNames(search, employeeArray);
+            searchNames(search, cardsArray);
         });
-
-
     })     
     
         
@@ -73,21 +71,21 @@ function generateEmployeeCard(employee) {
 
 // ------------------------------------------
 // GENERATE MODAL 
-function generateModal(employees, index) {
+function generateModal(employee, index) {
     // Create modal HTML
     const modalHtml = `
         <div class="modal-container">
             <div class="modal">
                 <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
                 <div class="modal-info-container">
-                    <img class="modal-img" src="${employees.picture.thumbnail}" alt="profile picture">
-                    <h3 id="${employees.name.last}" class="modal-name cap">${employees.name.first} ${employees.name.last}</h3>
-                    <p class="modal-text">${employees.email}</p>
-                    <p class="modal-text cap">${employees.location.city}</p>
+                    <img class="modal-img" src="${employee.picture.thumbnail}" alt="profile picture">
+                    <h3 id="${employee.name.last}" class="modal-name cap">${employee.name.first} ${employee.name.last}</h3>
+                    <p class="modal-text">${employee.email}</p>
+                    <p class="modal-text cap">${employee.location.city}</p>
                     <hr>
-                    <p class="modal-text">${employees.phone[0]}${employees.phone[1]}${employees.phone[2]}${employees.phone[3]}${employees.phone[4]} ${employees.phone[6]}${employees.phone[7]}${employees.phone[8]}${employees.phone[9]}${employees.phone[10]}${employees.phone[11]}${employees.phone[12]}${employees.phone[13]}</p>
-                    <p class="modal-text">${employees.location.street.number} ${employees.location.street.name} ${employees.location.city}, ${employees.location.state} ${employees.location.postcode}</p>
-                    <p class="modal-text">Birthday: ${employees.dob.date[5]}${employees.dob.date[6]}/${employees.dob.date[8]}${employees.dob.date[9]}/${employees.dob.date[0]}${employees.dob.date[1]}${employees.dob.date[2]}${employees.dob.date[3]}</p>
+                    <p class="modal-text">${employee.phone[0]}${employee.phone[1]}${employee.phone[2]}${employee.phone[3]}${employee.phone[4]} ${employee.phone[6]}${employee.phone[7]}${employee.phone[8]}${employee.phone[9]}${employee.phone[10]}${employee.phone[11]}${employee.phone[12]}${employee.phone[13]}</p>
+                    <p class="modal-text">${employee.location.street.number} ${employee.location.street.name} ${employee.location.city}, ${employee.location.state} ${employee.location.postcode}</p>
+                    <p class="modal-text">Birthday: ${employee.dob.date[5]}${employee.dob.date[6]}/${employee.dob.date[8]}${employee.dob.date[9]}/${employee.dob.date[0]}${employee.dob.date[1]}${employee.dob.date[2]}${employee.dob.date[3]}</p>
                 </div>
             </div>
             <div class="modal-btn-container">
@@ -116,16 +114,26 @@ function generateModal(employees, index) {
     // Previous and next modals
     const prevButton = document.querySelector('.modal-prev')
     prevButton.addEventListener('click', (e) => {
-        // let employeeArray = Array.from(employees)
-        switchModal(employees[index - 1])
+        switchModal(employeeData[index - 1])
     })
 
     const nextButton = document.querySelector('.modal-next')
     nextButton.addEventListener('click', (e) => {
-        // let employeeArray = Array.from(employees)
-        switchModal(employees[index + 1])
+        switchModal(employeeData[index + 1])
     })
 }
+
+
+// ------------------------------------------
+// DISPLAY PREVIOUS AND NEXT MODAL
+function switchModal(employee, index) {
+    const modalContainer = document.querySelector('.modal-container')
+    modalContainer.style.display = 'none';
+    modalContainer.classList.remove('modal-container')
+    modalContainer.classList.add('modal-closed')
+    generateModal(employee, index)
+}
+
 
 // ------------------------------------------
 // SEARCH EMPLOYEES 
@@ -152,18 +160,6 @@ function searchNames(search, employeeArray) {
         };
     };
 };
-
-
-// ------------------------------------------
-// DISPLAY PREVIOUS AND NEXT MODAL
-function switchModal(employees, index) {
-    const modalContainer = document.querySelector('.modal-container')
-    modalContainer.style.display = 'none';
-    modalContainer.classList.remove('modal-container')
-    modalContainer.classList.add('modal-closed')
-    generateModal(employees, index)
-}
-
 
 
 
