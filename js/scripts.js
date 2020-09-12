@@ -72,6 +72,7 @@ function generateEmployeeCard(employee) {
 // ------------------------------------------
 // GENERATE MODAL 
 function generateModal(employee, index) {
+
     // Create modal HTML
     const modalHtml = `
         <div class="modal-container">
@@ -105,9 +106,7 @@ function generateModal(employee, index) {
     close.addEventListener('click', (e) => {
         let target = e.target.closest('.modal-close-btn');
             if (target.className === 'modal-close-btn') {
-                document.querySelector('.modal-container').style.display = 'none'; 
-                modalContainer.classList.remove('modal-container')
-                modalContainer.classList.add('modal-closed')
+                document.querySelector('.modal-container').remove(); 
             }
     })
 
@@ -127,10 +126,7 @@ function generateModal(employee, index) {
 // ------------------------------------------
 // DISPLAY PREVIOUS AND NEXT MODAL
 function switchModal(employee, index) {
-    const modalContainer = document.querySelector('.modal-container')
-    modalContainer.style.display = 'none';
-    modalContainer.classList.remove('modal-container')
-    modalContainer.classList.add('modal-closed')
+    document.querySelector('.modal-container').remove()
     generateModal(employee, index)
 }
 
