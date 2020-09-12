@@ -113,12 +113,16 @@ function generateModal(employee, index) {
     // Previous and next modals
     const prevButton = document.querySelector('.modal-prev')
     prevButton.addEventListener('click', (e) => {
-        switchModal(employeeData[index - 1])
+        if (index != 0) {
+            switchModal(employeeData[index - 1], index - 1)
+        }
     })
 
     const nextButton = document.querySelector('.modal-next')
     nextButton.addEventListener('click', (e) => {
-        switchModal(employeeData[index + 1])
+        if (index != 11) {
+            switchModal(employeeData[index + 1], index + 1)
+        }
     })
 }
 
